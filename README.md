@@ -1,10 +1,12 @@
+# 目录
+
+[TOC]
+
 # OJ 网址
 [链接](http://www.pythontip.com/coding/code_oj)
 
 看上去好像只支持 Python2.X 的语法, 提交前可到[在线编程](http://www.pythontip.com/coding/run)进行测试
 
-# 目录
-* [题目 1: just print a+b](#题目-1:-just-print-a+b)
 
 ## 题目 1: just print a+b
 ### 描述
@@ -183,7 +185,7 @@ print( solve( L ) )
 给你一个正整数列表 L, 如 L=[2,8,3,50], 判断列表内所有数字乘积的最后一个非零数字的奇偶性,
 奇数输出1,偶数输出0. 如样例输出应为0
 
-## solve
+### solve
 ```Python
 #看了题解:分析所有数字的约数中2和5的数量，总有如果n(2)>n(5)，则结果必为偶数
 
