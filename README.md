@@ -148,3 +148,74 @@ def lcm( x,y ) :
 
 print( lcm( a,b ) )
 ```
+
+## 题目 11: 结尾0的个数 
+### 描述
+给你一个正整数列表 L, 如 L=[2,8,3,50], 输出L内所有数字的乘积末尾0的个数, 如样例L的结果为2.(提示:不要直接相乘,数字很多,可能溢出)
+
+### solve
+```Python
+#看了题解：总的来说就是计算除以2和除以5的个数，输出最小的就可以了
+
+def solve( L ) :
+    num_2 = 0
+    num_5 = 0
+    for each in L :
+        num_5 += count_mod( each,5 )
+        num_2 += count_mod( each,2 )
+    return num_2 if num_2 <= num_5 else num_5
+
+def count_mod( number,mod ) :
+    counts = 0
+    while number % mod == 0 :
+        counts += 1
+        number /= mod
+    return counts
+
+print( solve( L ) )
+```
+
+## 题目 12: 结尾非零数的奇偶性
+### 描述
+给你一个正整数列表 L, 如 L=[2,8,3,50], 判断列表内所有数字乘积的最后一个非零数字的奇偶性,
+奇数输出1,偶数输出0. 如样例输出应为0
+
+## solve
+```Python
+#看了题解:分析所有数字的约数中2和5的数量，总有如果n(2)>n(5)，则结果必为偶数
+
+def solve( L ) :
+    num_2 = 0
+    num_5 = 0
+    for each in L :
+        num_5 += count_mod( each,5 )
+        num_2 += count_mod( each,2 )
+    return 1 if num_2 <= num_5 else 0
+
+def count_mod( number,mod ) :
+    counts = 0
+    while number % mod == 0 :
+        counts += 1
+        number /= mod
+    return counts
+
+print( solve( L ) )
+```
+
+## 题目 13: 光棍的悲伤 
+### 描述
+光棍们对1总是那么敏感，因此每年的11.11被戏称为光棍节。
+鄙人光棍几十载，光棍自有光棍的快乐。让我们勇敢面对光棍的身份吧，
+现在就证明自己：给你一个整数a，数出a在二进制表示下1的个数，并输出。
+
+### solve
+```Python
+def solve( num ) :
+    return bin( num ).count( "1" )
+
+"""
+bin为内置函数，将num转换成二进制数（要求num整数或者包含__index__()方法切返回值为integer的类型）
+"""
+
+print( solve( a ) )
+```
