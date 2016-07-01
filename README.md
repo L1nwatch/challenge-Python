@@ -1,5 +1,5 @@
 # 目录
-- [OJ 网址](#OJ-网址)  
+- [OJ 网址](#OJ%20;网址)  
 - [题目 1: just print a+b](#题目-1:-just-print-a+b)
 - [题目 2: list排序](#题目-2:-list排序)
 
