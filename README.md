@@ -1,7 +1,7 @@
 # 目录
 - [OJ 网址](#oj-网址)  
-- [题目 1: just print a+b](#题目-1:-just-print-a+b)
-- [题目 2: list排序](#题目-2:-list排序)
+- [题目 1: just print a+b](#题目-1-just-print-ab)
+- [题目 2: list排序](#题目-2-list排序)
 
 # OJ 网址
 [链接](http://www.pythontip.com/coding/code_oj)
