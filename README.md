@@ -1,6 +1,6 @@
 # 目录
-
-[TOC]
+* [目录](#目录)
+* [OJ 网址](#OJ-网址)
 
 # OJ 网址
 [链接](http://www.pythontip.com/coding/code_oj)
