@@ -58,6 +58,8 @@ def solve(num):
     """
     result = str()
     str_num = str(num)
+
+    # 零以及负数处理
     if num == 0:
         result += "零"
     if num < 0:
@@ -78,7 +80,7 @@ def solve(num):
     return result
 
 
-def fun1(num, flag=False):
+def fun1(num, need_to_print_zero=False):
     num = num.zfill(4)
     result = str()
 
@@ -88,17 +90,17 @@ def fun1(num, flag=False):
         if temp != 0:
             result += num2chinese[temp]
             result += num2chinese[10 ** (i - 1)] if i != 1 else str()
-            flag = True
-        elif flag:
-            if int(num) != 0:
+            need_to_print_zero = True
+        elif need_to_print_zero:
+            if int(num) != 0:  # 不是最后一个 0
                 result += num2chinese[0]
-                flag = False
+                need_to_print_zero = False
         num = num[1:]
 
     return result
 
 
 if __name__ == "__main__":
-    a = 55555
+    a = 567890
     print(solve(a))
     # print(solve(a).decode("utf-8"))
