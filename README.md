@@ -414,3 +414,40 @@ if __name__ == '__main__':
     print("%d %d" % (List[0], List[1]))
 ```
 
+## 题目 19: 单身情歌
+### 描述
+抓不住爱情的我
+
+总是眼睁睁看它溜走
+
+...
+
+现在来练习一下发现爱的能力，给你一个字符串a,如果其中包含"LOVE"（love不区分大小写)则输出LOVE，否则输出SINGLE。
+
+### solve
+```Python
+if a.lower().count("love") > 0:
+    print("LOVE")
+else:
+    print("SINGLE")
+```
+
+## 题目 20: 信息加密 
+### 描述
+给你个小写英文字符串a和一个非负数b(``0<=b<26``), 将a中的每个小写字符替换成字母表中比它大b的字母。
+
+这里将字母表的z和a相连，如果超过了z就回到了a。例如``a="cagy",b=3``, 则输出 fdjb
+
+### solve
+```Python
+def transposition(string, num):
+    answer = ""
+    for each in string:
+        answer += chr((ord(each) - ord('a') + num) % 26 + ord('a'))
+
+    return answer
+
+if __name__ == '__main__':
+    string = transposition(a, b)
+    print(string)
+```
