@@ -283,87 +283,95 @@ Note：数据已于2013-11-19日加强，原来通过的代码可能不能再次
 
 ### solve
 ```Python
-cn_num = {
-    0:"零",
-    1:"壹",
-    2:"贰",
-    3:"叁",
-    4:"肆",
-    5:"伍",
-    6:"陆",
-    7:"柒",
-    8:"捌",
-    9:"玖",
-    10:"拾",
-    100:"佰",
-    1000:"仟",
-    10000:"万",
-    }
+num2chinese = {
+    0: "零",
+    1: "壹",
+    2: "贰",
+    3: "叁",
+    4: "肆",
+    5: "伍",
+    6: "陆",
+    7: "柒",
+    8: "捌",
+    9: "玖",
+    10: "拾",
+    100: "佰",
+    1000: "仟",
+    10000: "万",
+}
 
-def solve( num ) :
-    result = ""
-    str_num = str( num )
-    if num == 0 :
+def solve(num):
+    """
+    将数字形式的金额打印成人民币金额
+    :param num: 555
+    :return: 伍佰伍拾伍圆
+    """
+    result = str()
+    str_num = str(num)
+
+    # 零以及负数处理
+    if num == 0:
         result += "零"
-    if num < 0 :
+    if num < 0:
         result += "负"
-        str_num = str_num[ 1: ]
+        str_num = str_num[1:]
 
-    length = len( str_num )
-    if length > 4 :
-        str_num1 = str_num[ : ( length - 4 ) ]
-        str_num = str_num[ ( length - 4 ) : ]
-        result += fun1( str_num1 )
+    length = len(str_num)
+    # 万圆以上
+    if length > 4:
+        str_num1 = str_num[: (length - 4)]
+        str_num = str_num[(length - 4):]
+        result += fun1(str_num1)  # 万左边的数值
         result += "万"
-        result += fun1( str_num,True )
-    else :
-        result += fun1( str_num )
+        result += fun1(str_num, True)  # 万右边的数值
+    else:
+        result += fun1(str_num)
     result += "圆"
     return result
 
 
-def fun1( num,flag = False ) :
-    num_temp = "0000"
-    num_temp = num_temp[ :4 - len( num ) ] + num
-    num = num_temp
-    result = ""
-    temp = int( num ) // 1000
-    if temp != 0 :
-        result += cn_num[temp]
-        result += cn_num[1000]
-        flag = True
-    elif flag == True :
-        if int( num ) != 0 :
-            result += cn_num[0]
-            flag = False
+def fun1(num, need_to_print_zero=False):
+    num = num.zfill(4)
+    result = str()
 
-    num = num[ 1: ]
-    temp = int( num ) // 100
-    if temp != 0 :
-        result += cn_num[temp]
-        result += cn_num[100]
-        flag = True
-    elif flag == True :
-        if int( num ) != 0 :
-            result += cn_num[0]
-            flag = False
+    # 从千位循环至个位
+    for i in range(4, 0, -1):
+        temp = int(num) // (10 ** (i - 1))
+        if temp != 0:
+            result += num2chinese[temp]
+            result += num2chinese[10 ** (i - 1)] if i != 1 else str()
+            need_to_print_zero = True
+        elif need_to_print_zero:
+            if int(num) != 0:  # 不是最后一个 0
+                result += num2chinese[0]
+                need_to_print_zero = False
+        num = num[1:]
 
-    num = num[ 1: ]
-    temp = int( num ) // 10
-    if temp != 0 :
-        result += cn_num[temp]
-        result += cn_num[10]
-        flag = True
-    elif flag == True :
-        if int( num ) != 0 :
-            result += cn_num[0]
-            flag = False
-
-    num = num[ 1: ]
-    temp = int( num )
-    if temp != 0 :
-        result += cn_num[temp]
     return result
 
-print( solve( a ).decode( "utf-8") )
+print(solve(a))
+```
+
+## 题目 17: 公约数的个数
+### 描述
+给你两个正整数a,b,  输出它们公约数的个数。
+
+## solve
+```Python
+def gcd(x, y):
+    return x if y == 0 else gcd(y, x % y)
+
+def countGCD(x, y, max_gcd):
+    counts = 1
+    for i in range(2, max_gcd + 1):
+        if x % i == 0 and y % i == 0:
+            counts += 1
+
+    return counts
+
+if __name__ == '__main__':
+    x, y = 11, 55
+    max_gcd = gcd(x, y)
+    counts = countGCD(x, y, max_gcd)
+    print(counts)
 ```
