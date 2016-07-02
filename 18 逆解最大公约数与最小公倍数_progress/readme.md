@@ -19,31 +19,4 @@
 """
 PS:注意算法算出来之后还得乘上gcd才对啊!!!!!!
 """
-import math
-
-def gcd(x, y):
-    return x if y == 0 else gcd(y, x % y)
-
-def lcm(x, y):
-    return x * y / gcd(x, y)
-
-def getTheTwoNum(num_gcd, num_lcm):
-    List = []
-    tmp = num_lcm / num_gcd
-    for a in range(int(math.sqrt(tmp)), 0, -1):
-        if tmp % a == 0:
-            b = tmp / a
-            if gcd(a, b) == 1:
-                List.append(a * num_gcd)
-                List.append(b * num_gcd)
-                break
-
-    return List
-
-if __name__ == '__main__':
-    num_gcd = 4
-    num_lcm = 16
-    List = getTheTwoNum(num_gcd, num_lcm)
-    List.sort()
-    print("%d %d" % (List[0], List[1]))
 ```
