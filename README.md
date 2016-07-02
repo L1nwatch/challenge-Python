@@ -275,9 +275,9 @@ print( a.lower() )
     -1000	负壹仟圆
     1234567	壹佰贰拾叁万肆仟伍佰陆拾柒圆
 
-现在给你一个整数a(|a|<100000000), 打印出人民币大写表示.
+现在给你一个整数a(``|a| < 100000000``), 打印出人民币大写表示.
 
-注意：由于中文乱码问题，输出时请先decode("utf8")，例如你要输出ans = "零圆", print ans.decode("utf8").
+注意：由于中文乱码问题，输出时请先``decode("utf8")``，例如你要输出``ans = "零圆"``, ``print ans.decode("utf8")``.
 
 Note：数据已于2013-11-19日加强，原来通过的代码可能不能再次通过。
 
@@ -329,11 +329,9 @@ def solve(num):
     result += "圆"
     return result
 
-
 def fun1(num, need_to_print_zero=False):
     num = num.zfill(4)
     result = str()
-
     # 从千位循环至个位
     for i in range(4, 0, -1):
         temp = int(num) // (10 ** (i - 1))
@@ -346,9 +344,8 @@ def fun1(num, need_to_print_zero=False):
                 result += num2chinese[0]
                 need_to_print_zero = False
         num = num[1:]
-
     return result
-
+    
 print(solve(a))
 ```
 
@@ -358,6 +355,7 @@ print(solve(a))
 
 ## solve
 ```Python
+# 思路很简单, 就是计算出最大公约数之后把每个小于公约数的数都遍历一遍
 def gcd(x, y):
     return x if y == 0 else gcd(y, x % y)
 
@@ -366,12 +364,53 @@ def countGCD(x, y, max_gcd):
     for i in range(2, max_gcd + 1):
         if x % i == 0 and y % i == 0:
             counts += 1
-
+            
     return counts
 
-if __name__ == '__main__':
-    x, y = 11, 55
-    max_gcd = gcd(x, y)
-    counts = countGCD(x, y, max_gcd)
-    print(counts)
+max_gcd = gcd(a, b)
+counts = countGCD(a, b, max_gcd)
+print(counts)
 ```
+
+## 题目 18: 逆解最大公约数与最小公倍数 
+### 描述
+我们经常遇到的问题是给你两个数，要你求最大公约数和最小公倍数。
+今天我们反其道而行之，给你两个数a和b，计算出它们分别是哪两个数的最大公约数和最小公倍数。
+输出这两个数，小的在前，大的在后，以空格隔开。若有多组解，输出它们之和最小的那组。
+注：所给数据都有解，不用考虑无解的情况。
+
+### solve
+```Python
+import math
+
+__author__ = '__L1n__w@tch'
+
+
+def gcd(x, y):
+    return x if y == 0 else gcd(y, x % y)
+
+
+def lcm(x, y):
+    return x * y / gcd(x, y)
+
+
+def get_the_two_num(number_gcd, number_lcm):
+    a_list = []
+    tmp = number_lcm / number_gcd
+    for a in range(int(math.sqrt(tmp)), 0, -1):
+        if tmp % a == 0:
+            b = tmp / a
+            if gcd(a, b) == 1:
+                a_list.append(a * number_gcd)
+                a_list.append(b * number_gcd)
+                break
+
+    return a_list
+
+
+if __name__ == '__main__':
+    List = get_the_two_num(a, b)
+    List.sort()
+    print("%d %d" % (List[0], List[1]))
+```
+
