@@ -759,3 +759,158 @@ if __name__ == '__main__':
 ```Python
 print("Happy")
 ```
+
+## 题目 31: 山峰的个数
+### 描述
+十一假期,小P出去爬山,爬山的过程中每隔10米他都会记录当前点的海拔高度(以一个浮点数表示),这些值序列保存在一个由浮点数组成的列表h中。回到家中，小P想研究一下自己经过了几个山峰，请你帮他计算一下，输出结果。
+
+例如：h=[0.9,1.2,1.22,1.1,1.6,0.99], 将这些高度顺序连线，会发现有两个山峰，故输出一个2(序列两端不算山峰)
+
+### solve
+```Python
+#自己的思路是，遍历一遍，看每个数（除第一个和最后一个以外）是否比两边的数都大
+#是的话即为山峰
+
+def countNumOfPeaks(List):
+    counts = 0
+    for i in range(1, len(List) - 1):
+        if List[i] > List[i - 1] and List[i] > List[i + 1]:
+            counts += 1
+
+    return counts
+
+if __name__ == '__main__':
+    # h = [0.9, 1.2, 1.22, 1.1, 1.6, 0.99]
+    print(countNumOfPeaks(h))
+```
+
+## 题目 32: 三角形形状
+### 描述:
+给以一个三角形的三边长a,b和c(边长是浮点数),请你判断三角形的形状。
+
+若是锐角三角形，输出R;
+
+若是直角三角形，输出Z;
+
+若是钝角三角形，输出D;
+
+若三边长不能构成三角形，输出W.
+
+### solve
+```Python
+#自己想到的思路是用余弦定理
+#baidu了一下，发现是用最大边所对应的角来计算
+"""
+若最大边的平方等于另两边的平方和,则它为直角三角形;
+若最大边的平方大于另两边的平方和,则它为钝角三角形;
+若最大边的平方小于另两边的平方和,则它为锐角三角形.
+"""
+
+def canBeTriangle(a, b, c):
+    List = [a, b, c]
+    List.sort()
+    if (List[0] + List[1] > List[2]) and (List[2] - List[0] < List[1]):
+        return True
+    else:
+        return False
+
+def getTypeOfTriangle(a, b, c):
+    List = [i ** 2 for i in [a, b, c]]
+    List.sort()
+    result = List[2] - List[1] - List[0]
+    if result == 0:
+        return "Z"
+    elif result < 0:
+        return "R"
+    elif result > 0:
+        return "D"
+
+if __name__ == '__main__':
+    # a, b, c = 3, 4, 5
+    if canBeTriangle(a, b, c) == False:
+        print("W")
+    else:
+        print(getTypeOfTriangle(a, b, c))
+```
+
+## 题目 33: 大幂次运算
+### 描述:
+给你两个正整数a(``0 < a < 100000``)和n(``0 <= n <=100000000000``)，计算``(a^n) % 20132013``并输出结果
+
+### solve
+```Python
+def fastExpMod(b, e, m):
+    result = 1
+    while e != 0:
+        if (e&1) == 1:
+            # ei = 1, then mul
+            result = (result * b) % m
+        e >>= 1
+        # b, b^2, b^4, b^8, ... , b^(2^n)
+        b = (b*b) % m
+    return result
+
+# a, n = 5, 6
+print(fastExpMod(a, n, 20132013))
+```
+======================上面也是快速幂取模，跑起来对的！！！=========================
+***
+
+### solve2
+```Python
+#之前ACM有做过，就是求模公式呗
+"""
+翻一下acm笔记：
+(a * a) % m = ( a % m * a % m ) % m
+"""
+
+#看了下题解，说是快速幂（之前ACM刷斐波那契的时候应该遇到过了，就是二分矩阵快速求幂）
+#直接看题解报告了，自己写出算法是不太可能的。。。
+#题解。。。。牛过头了：print(pow(a, n, 20132013))
+
+"""
+以下说是快速幂取模：
+a^b mod c = ((a^2)^(b / 2)) mod c, b是偶数
+a^b mod c = ((a^2)^(b / 2) * a) mod c, b是奇数
+
+#下面的代码，在自己的机子上跑着是错的，但是在网上跑的确是对的？python版本的问题我估计！
+def PowerMod(a, n, ret):
+    if n == 0:
+        return ret
+    if n % 2:
+        ret = ret * a % 20132013
+
+    return PowerMod( a * a % 20132013, n / 2, ret)
+
+if __name__ == '__main__':
+    a, n = 5, 6
+    ret = 1
+    print(PowerMod(a, n, ret))
+"""
+```
+
+### run time error
+```Python
+"""
+version 1
+说是算法超时了...
+O(n)算法说我超时了，好吧，看来只能看题解了
+def solve(a, n):
+    result = 0
+    if n == 0:
+        result = 1
+    else:
+        result = a % 20132013
+        n -= 1
+
+    while n > 0:
+        n -= 1
+        result = (result * (a % 20132013)) % 20132013
+
+    return result
+
+if __name__ == '__main__':
+    a, n = 5, 5
+    print(solve(a, n))
+"""
+```
