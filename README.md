@@ -914,3 +914,189 @@ if __name__ == '__main__':
     print(solve(a, n))
 """
 ```
+
+## 题目 35: 最大连续子序列 
+### 描述:
+给你一个整数list L, 如 L=[2,-3,3,50], 求L的一个连续子序列，使其和最大，输出最大子序列的和。
+
+例如，对于L=[2,-3,3,50]， 输出53（分析：很明显，该列表最大连续子序列为[3,50]).
+
+### solve
+```Python
+#ACM老师讲过的一道题（比这难得多的），PPT里有，动态规划
+#查看了一下课件，得到状态方程：b[j]=max( b[j-1]+a[j], 0+a[j] ), 1<=j<=n
+
+def getLargestSum(List):
+    b = 0
+    largest_sum = 0
+    for each in List:
+        if b > 0:
+            b += each
+        else:
+            b = each
+        largest_sum = max(b, largest_sum)
+
+    return largest_sum
+
+if __name__ == '__main__':
+    # L = [2, -3, 3, 50]
+    print(getLargestSum(L))
+```
+
+## 题目 36: 最大非连续子序列 
+### 描述:
+给你一个整数list L, 如 L=[2,-3,3,50], 求L的一个非连续子序列，使其和最大，输出最大子序列的和。
+
+这里非连续子序列的定义是，子序列中任意相邻的两个数在原序列里都不相邻。
+
+例如，对于L=[2,-3,3,50]， 输出52（分析：很明显，该列表最大非连续子序列为[2,50]).
+
+### solve
+```Python
+#个人的思路是依旧利用动态规划，状态方程为：
+#b[j] = max(b[j - 2] + List[j], b[j - 1], List[j])
+
+def solve(List):
+    L = List[:] # 没有 List.copy(), 用 List[:] 替代了
+    if len(List) > 1:
+        L[1] = max(List[0], List[1])
+    for i in range(2, len(List)):
+        L[i] = max(L[i - 2] + List[i], L[i - 1], List[i])
+
+    return L[-1]
+
+if __name__ == '__main__':
+    # L = [8, -3, 2, -3, 3, 60, -100, 50]
+    print(solve(L))
+
+"""
+看下题解报告的：
+---version 1---
+n = len(L)
+f = list(L)
+for i in range(n):
+    if i > 0:
+        f[i] = max(f[i],f[i-1])
+    if i > 1:
+        f[i] = max(f[i],f[i-2]+L[i])
+
+print(f[n-1])
+
+其中f[i]表示0-i的最大非连续子序列和
+
+---version 2---
+for i in range(2, len(L)):
+    L[i] = max(max(L[0:i-1]), 0) + L[i]
+print max(L)
+"""
+```
+
+## 题目 37: 简单题之勾股定理
+### 描述
+给你直角三角形的两个直角边的边长a,b,请你求出其斜边边长，结果保留小数点后三位小数。
+
+如a=3, b =4, 则输出5.000。
+
+### solve
+```Python
+#勾股定理的公式不就是c^2 = a^2 + b^2么
+#print '%.3f' %(a**2+b**2)**0.5
+
+def getC(a, b):
+    c = a ** 2 + b ** 2
+    return c ** 0.5
+
+if __name__ == '__main__':
+    # a, b = 3, 4
+    answer = getC(a, b)
+    print(format(answer, '.3f'))
+```
+
+## 题目 38: 简单题之列表转换
+### 描述
+给你一个字符串列表L，请用一行代码将列表所有元素拼接成一个字符串并输出。
+
+如L=['abc','d','efg'], 则输出abcdefg。
+
+### solve
+```Python
+#题目要求一行代码，吓~~~
+
+# L=['abc','d','efg']
+print(''.join([str(i) for i in L])) #这句好了，在2.X版本下
+#题解更简单：
+print(''.join(L))
+
+#下面这句在python3.X版本倒是对了，2.X自己报语法错误了
+[print(i, end = "") for i in L]
+```
+
+## 题目 39: 简单题之输出格式练习 
+### 描述
+
+给你一个字符串列表L，用一行代码顺序输出L中的元素，元素之间以一个空格隔开，注意行尾不要有空格，输出单独占一行。
+如L=['abc','d','efg'], 则输出abc d efg。
+
+### solve
+```Python
+#又是一行代码，吓~~
+#思路跟上一题一样呗，2.X版本下用join函数, 3.X版本下print(i, end=' ')
+
+# L = ['abc', 'd', 'efg']
+print(' '.join(L))
+```
+
+## 题目 40: 整数解 
+### 描述
+给你两个整数a和b（``-10000<a,b<10000``），请你判断是否存在两个整数，他们的和为a，乘积为b。
+
+若存在，输出Yes,否则输出No
+
+例如：``a=9,b=15``, 此时不存在两个整数满足上述条件，所以应该输出No。
+
+### solve
+```Python
+#看到a和b那么小，一下子就想遍历了。。。
+#看version 1的遍历，一下子就超时了，说明不行
+#x + y = a, x * y = b ==> x * ( a - x ) = b，这样就只有一层遍历了
+
+#看题解居然使用解方程的方法
+#题解的时间复杂度为O(1)啊，醉了：
+#两个数应该为方程x^2 - a*x + b = 0 的解，判断delta即可
+
+def isExist(a, b):
+    for i in range(-9999, 10000):
+        if i * ( a - i ) == b:
+            return True
+
+    return False
+
+if __name__ == '__main__':
+    # a, b = 9, 15
+    if isExist(a, b):
+        print("Yes")
+    else:
+        print("No")
+
+"""
+---version 2---
+题解：
+from math import sqrt
+delta = a*a - 4*b
+if delta > 0 and int(sqrt(delta)) == sqrt(delta):
+    print "Yes"
+else:
+    print "No"
+"""
+
+"""
+---version 1---
+def isExist(a, b):
+    for i in range(-9999, 10000):
+        for j in range(-9999, 10000):
+            if i + j == a and i * j == b:
+                return True
+
+    return False
+"""
+```
