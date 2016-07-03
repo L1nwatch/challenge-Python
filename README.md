@@ -1174,3 +1174,743 @@ if __name__ == '__main__':
     else:
         print("No")
 ```
+
+## 题目 42: 分拆素数和
+### 描述
+把一个偶数拆成两个不同素数的和，有几种拆法呢？
+
+现在来考虑考虑这个问题，给你一个不超过10000的正的偶数n，计算将该数拆成两个不同的素数之和的方法数，并输出。
+
+如n=10，可以拆成3+7，只有这一种方法，因此输出1.
+
+### solve
+```Python
+#个人思路，遍历一遍10000以内的素数。
+#然后我就得先有个10000以内的素数表
+
+#自己的方法虽然过了，但是个人觉得时间复杂度应该会高些，毕竟是O(n)算法
+"""
+以下看下题解吧：
+看了题解，比较喜欢的是这个(利用哈希表而不是列表这样时间复杂度快了N多)：
+def sushuDic(n):
+    dic = {x: True for x in range(2, n)}
+    for x in dic.keys():
+        if dic[x]:
+            i = x * 2
+            while i < n:
+                dic[i] = False
+                i = i + x
+    return dic
+
+
+def divideCnt(n):
+    dic = sushuDic(n)
+    cnt = 0
+    for i in range(2, n // 2):
+        if dic[i] and dic[n-i]:
+            cnt = cnt + 1
+    return cnt
+
+print divideCnt(n)
+
+用哈希表快速求素数。
+"""
+import  math
+
+def createPrimeList(num):
+    List = []
+
+    for i in range(2, num):
+        prime = True
+        for j in range(2, int(math.sqrt(i)) + 1):
+            if i % j == 0:
+                prime = False
+                break
+        if prime:
+            List.append(i)
+
+    return List
+
+def countWays(num, prime_list):
+    counts = 0
+    for each in prime_list:
+        if each >= num:
+            break
+        elif each != (num - each) and (num - each) in prime_list:
+            counts += 1
+
+    return counts // 2
+
+if __name__ == '__main__':
+    prime_list = createPrimeList(10000)
+    # n = 10
+    ways = countWays(n, prime_list)
+    print(ways)
+```
+
+## 题目 43: 斐波那契数列
+### 描述
+斐波那契数列为1,1,2,3,5,8...。数列从第三项起满足，该项的数是其前面两个数之和。
+
+现在给你一个正整数n（n < 10000), 请你求出第n个斐波那契数取模20132013的值（斐波那契数列的编号从1开始）。
+### solve
+```Python
+#这道题我还是搬ACM的题解吧，毕竟之前用那个方法（C++下的）过了2ms的题
+#所以算法时间复杂度绝对是可以的
+
+#以下：f[n] = f[n - 1] + f[n - 2]
+#附算法网址：http://www.acmerblog.com/fibonacci-3395.html
+
+"""
+题解用的迭代：
+def count(n):
+    x = [0,1]
+    for i in range(2,n+1):
+        x.append(x[i-1] + x[i-2])
+    return x[n]
+
+print count(n)%20132013
+"""
+
+def multiply(c, a, b, mod):
+    tmp = [ a[0][0] * b[0][0] + a[0][1] * b[1][0],
+            a[0][0] * b[0][1] + a[0][1] * b[1][1],
+            a[1][0] * b[0][0] + a[1][1] * b[1][0],
+            a[1][0] * b[0][1] + a[1][1] * b[1][1] ]
+    c[0][0] = tmp[0] % mod
+    c[0][1] = tmp[1] % mod
+    c[1][0] = tmp[2] % mod
+    c[1][1] = tmp[3] % mod
+
+def fibonacci(n, mod):
+    if n == 0:
+        return 0
+    elif n <= 2:#这里表示第0项为0，第1，2项为1
+        return 1
+
+    a = [[1, 1], [1, 0]]
+    result = [[1, 0], [0, 1]]
+    n -= 2
+    while n > 0:
+        if n % 2 == 1:
+            multiply(result, result, a, mod)
+        multiply(a, a, a, mod)
+        n //= 2 #注意这里不能写n /= 2,得用地板除法
+
+    s = (result[0][0] + result[0][1]) % mod
+    return s
+
+if __name__ == '__main__':
+    mod = 20132013
+    answer = fibonacci(n, mod)
+    print(answer)
+```
+
+## 题目 44: 超级楼梯
+### 描述
+有一楼梯共n级，刚开始时你在第一级，若每次只能跨上一级或二级，要走上第n级，共有多少种走法？
+
+现在给你一个正整数n（``0<n<40``),请你输出不同的走法数。
+
+如``n=2``,则输出1（你只有一种走法，走一步，从第一级到第二级）
+
+### solve
+```Python
+#这道题不就是斐波那契么，= =我觉得是
+#f[n] = f[n - 1] + f[n - 2]
+#因为n比较少，所以我用迭代吧
+
+"""
+另一种迭代的表达形式：
+a = 1
+b = 2
+for i in range(1, n-1):
+    c = a + b
+    a = b
+    b = c
+print a
+"""
+
+def fibonacci(n):
+    f = [0, 1]
+    for i in range(2, n + 1):
+        f.append(f[i - 1] + f[i - 2])
+
+    return f[-1]
+
+if __name__ == '__main__':
+    # n = 4
+    print(fibonacci(n))
+```
+
+## 砝码问题
+### 描述
+有一组砝码，重量互不相等，分别为m1、m2、m3……mn；它们可取的最大数量分别为x1、x2、x3……xn。
+
+现要用这些砝码去称物体的重量,问能称出多少种不同的重量。
+
+现在给你两个正整数列表w和n， 列表w中的第i个元素w[i]表示第i个砝码的重量，列表n的第 i 个元素 n[i] 表示砝码i的最大数量。i从0开始，请你输出不同重量的种数。
+
+如：w=[1,2], n=[2,1], 则输出5（分析：共有五种重量：0,1,2,3,4）
+
+### solve
+```Python
+#为啥我看到这种问题，第一眼想到的是背包问题。
+#不浪费时间，果断看题解
+
+#喵了一遍题解，DP+遍历的说？
+#自己的思路有三种循环。
+#一次性过了，简述一下思路吧，第一个循环表示每一个砝码来一次，第二个循环表示
+#该砝码从1个取到n[i]个，第三个循环表示上一个的所有情况每个都取一下然后再来+现在的这个
+
+#感觉自己的代码时间复杂度很大，不是一般的大！
+
+def solve(w, n):
+    total = set()
+    total.add(0)
+    length = len(w)
+    for i in range(length):
+        tmp_set = set()
+        for j in range(1, n[i] + 1):
+            for each in total:
+                tmp = each + j * w[i]
+#                print("i = {0}, j = {1}, each = {2}, tmp = {3}"\
+#                      .format(i, j, each, tmp))
+                if tmp not in total:
+                    tmp_set.add(tmp)
+        total.update(tmp_set)
+
+    return total
+
+if __name__ == '__main__':
+    # w = [1, 2]
+    # n = [2, 1]
+    print(len(solve(w, n)))
+
+"""
+题解的：
+---version 1---
+total_w=0
+length_n=len(w)
+for i in range(length_n):
+    total_w+=w[i]*n[i]
+S=set([])
+S.add(total_w)
+for i in range(length_n):
+    temp_S=S.copy()
+    for s in temp_S:
+        j=1
+        while j<=n[i]:
+            S.add(s-j*w[i])
+            j+=1
+print len(S)
+
+---version 2---
+若m1能被称出，则total_w-m1亦能被称出，如此，可以稍作优化：
+
+total_w=0
+length_n=len(w)
+for i in range(length_n):
+    total_w+=w[i]*n[i]
+S=set([])
+S.add(total_w)
+for i in range(length_n):
+    temp_S=S.copy()
+    for s in temp_S:
+        j=1
+        while j<=n[i]:
+            if s-j*w[i]>=total_w/2:
+                S.add(s-j*w[i])
+                S.add(total_w-s+j*w[i])
+                j+=1
+            else:
+                break
+print S
+print len(S)
+"""
+```
+
+## 题目 46: 取石子游戏
+### 描述
+有两堆石子，数量任意，可以不同。游戏开始由两个人轮流取石子。游戏规定，每次有两种不同的取法，一是可以在任意的一堆中取走任意多的石子；二是可以在两堆中同时取走相同数量的石子。最后把石子全部取完者为胜者。
+
+现在给出初始的两堆石子的数目a和b，如果轮到你先取，假设双方都采取最好的策略，问最后你是胜者还是败者。
+
+如果你是胜者，输出Win,否则输出Loose。
+
+例如，a=3,b=1, 则输出Win(你先在a中取一个，此时a=2，b=1,此时无论对方怎么取，你都能将所有石子都拿走).
+
+### solve
+```Python
+#之前在ACM课上听过，这是博弈论的东西
+#查了一下，是威佐夫博奕
+#ACM解题报告：http://blog.csdn.net/csust_acm/article/details/7957180
+
+import math
+
+def solve(a, b):
+    '面对非奇异局势，先拿者必胜；反之，则后拿者取胜。'
+    a, b = min(a, b), max(a, b) #奇异局势下，bk > ak
+    k = b - a #奇异局势下，bk = ak + k
+    m = int((math.sqrt(5.0) + 1) * k / 2) #奇异局势下，ak = 这个公式
+    return m != a #若m == a，则为奇异局势，先拿者必败
+
+if __name__ == '__main__':
+    #a, b = 3, 1
+    #a, b = 2, 1
+    #a, b = 8, 4
+    #a, b = 4, 7
+    if solve(a, b):
+        print("Win")
+    else:
+        print("Loose")
+
+"""
+题解用到了奇异态势，并不好理解。
+相关分析参考：http://blog.renren.com/share/251405117/755224137
+
+推出一个概念：奇异态势。有以下特点：
+
+1.无法从一个奇异态势一步走到另一个奇异态势；
+
+2.任何非奇异态势可以一步走到某一个奇异态势。
+
+于是可构建以下奇异态势，前几组分别为(0,0),(1,2),(3,5),(4,7),(6,10),(8,13)....满足：1）各奇异态势间无重复元素；2）步长（|a-b|）递增，保证各不相同
+
+以此可以计算出(a,b)以下的奇异态势，若(a,b)不在其中，则必赢。
+
+题解代码：
+m,n=max(a,b),min(a,b)
+small_num=0
+large_num=0
+step=0
+S=set([])
+S.add(small_num)
+S.add(large_num)
+Win=True
+while small_num<n and large_num<m:
+    while small_num in S:
+        small_num+=1
+    step+=1
+    large_num=small_num+step
+    S.add(small_num)
+    S.add(large_num)
+    if small_num==n and large_num==m:
+        Win=False
+        break
+#    print '('+str(small_num)+','+str(large_num)+')'
+if Win:
+    print 'Win'
+else:
+    print 'Loose'
+"""
+```
+
+## 题目 47: 杨辉三角
+### 描述:
+还记得中学时候学过的杨辉三角吗？具体的定义这里不再描述，你可以参考以下的图形：
+
+    1
+    1 1
+    1 2 1
+    1 3 3 1
+    1 4 6 4 1
+    1 5 10 10 5 1
+    ..............
+    
+先在给你一个正整数n，请你输出杨辉三角的前n层
+注意：层数从1开始计数,每层数字之间用一个空格隔开，行尾不要有空格。
+如``n=2``,则输出：
+
+    1
+    1 1
+
+### solve
+```Python
+def getNum(row, col, num):
+    if col == 0 or col == row:
+        num[row][col] = 1
+    if num[row][col] == -1:
+        num[row][col] = getNum(row - 1, col - 1, num) + \
+                        getNum(row - 1, col, num)
+
+    return num[row][col]
+
+def solve(n, num_array):
+    for i in range(n):
+        for j in range(i):
+            print(getNum(i, j, num_array)),
+        print(getNum(i, i, num_array))
+
+def createNumArray(n):
+    num = []
+    for i in range(n):
+        num.append([-1 for i in range(n)])
+
+    return num
+
+if __name__ == "__main__":
+    num_array = createNumArray(n)
+    solve(n, num_array)
+```
+
+## 题目 48: 砝码问题II
+### 描述
+有一组砝码，重量互不相等，分别为m1、m2、m3……mn；每种砝码的数量有无限个。
+
+现要用这些砝码去称物体的重量,给你一个重量n,请你判断有给定的砝码能否称出重量n。
+
+现在给你一个正整数列表w和一个正整数n，列表w中的第i个元素w[i]表示第i种砝码的重量，n 表示要你判断的重量。如果给定砝码能称出重量n，输出Yes，否则输出No。
+
+例如，w=[2,5,11], n=9,则输出Yes（取两个2，一个5）。
+
+### solve
+```Python
+#悲催了，用别人的也是超时了，改进一下之前的吧，不求出全部了，一求到那个就返回True
+#这下成功了
+
+def getWeightList(w, amount, n):
+    total = set()
+    total.add(0)
+    length = len(w)
+    for i in range(length):
+        tmp_set = set()
+        for j in range(1, amount[i] + 1):
+            for each in total:
+                tmp = each + j * w[i]
+                if tmp == n:
+                    return True
+#                print("i = {0}, j = {1}, each = {2}, tmp = {3}"\
+#                      .format(i, j, each, tmp))
+                if tmp not in total:
+                    tmp_set.add(tmp)
+        total.update(tmp_set)
+
+    return False
+
+def getMaxAmount(w, n):
+    amount = []
+    for each in w:
+        amount.append(n // each)
+
+    return amount
+
+if __name__ == "__main__":
+    # w = [2, 5, 11]
+    # n = 9
+    amount = getMaxAmount(w, n)
+    if getWeightList(w, amount, n):
+        print("Yes")
+    else:
+        print("No")
+
+"""
+题解：
+---version 1---
+完全背包:
+
+L=len(w)
+s=[-1 for i in range(n+1)]
+s[0]=0
+for i in range(L):
+    for j in range(1,n+1):
+        if j-w[i]>=0 and s[j-w[i]]!=-1:
+            s[j]=1
+if s[n]!=-1:
+    print 'yes'
+else:
+    print "no"
+
+"""
+```
+
+## 题目 49: 进制转换
+### 描述
+给你一个十进制数a，将它转换成b进制数,如果 ``b>10``,用大写字母表示（10用A表示，等等）
+
+a为32位整数，``2 <= b <= 16``
+
+如 a = 3, b = 2, 则输出 11
+
+### solve
+```Python
+#基本思路是除b取余法
+#搞了半天错误的原因是没处理负数情况，醉了。。。
+
+def solve(num, n):
+    character = "0123456789ABCDEF"
+    answer = ""
+    if num < 0:
+        symbol = "-"
+        num = -num
+    else:
+        symbol = ""
+    while num > 0:
+        answer += character[num % n]
+        num //= n
+
+    return symbol + answer[::-1]
+
+if __name__ == "__main__":
+    # a, b = -100, 16
+    print(solve(a, b))
+
+"""
+题解：
+---version 1---
+d = '0123456789ABCEDFGHIJKLMNOPQRSTUVWXYZ'
+def f(x,y):
+    s = []
+    while x>=y:
+        s.append(x%y)
+        x /=y
+    s.append(x)
+    return ''.join([d[c] for c in s[::-1]])
+
+print (a<0 and '-' or '')+f(abs(a),b)
+"""
+```
+
+## 题目 50: Py扔铅球
+### 描述
+Py不但是编程大牛，而且是运动健将。比如说扔铅球，1000m，现在Py参加校园扔铅球比赛，给你Py的身高a（双精度数），球落地点与Py头部的连线与水平线的夹角 b（弧度），要你编写一个程序计算Py扔铅球的水平距离。
+
+a，b都是浮点数，注意b是弧度，其中， ``140 < a < 200,  0 < b < 1.5``.
+
+输出你求出的水平距离，保留到小数点后三位。
+
+如，a = 165.5, b = 1.1, 则输出 84.234
+
+### solve
+```Python
+#思路：画一下图，易得a/x = tanb(θ)
+#format函数参考：http://pyformat.info/
+
+import math
+
+def solve(a, b):
+    answer = a / math.tan(b)    #注意math.tan(b)本来就要求弧度制而不是角度!
+    return answer
+
+if __name__ == "__main__":
+    a, b = 165.5, 1.1
+    print('{:.3f}'.format(solve(a, b)))
+```
+
+## 题目 51: 降序排序
+### 描述
+给你一个list L, 如 L=[2,8,3,50], 对L进行降序排序并输出,如样例L的结果为[50,8,3,2]
+
+### solve
+```Python
+if __name__ == "__main__":
+    # L = [2,8,3,50]
+    L.sort(reverse = True)
+    print(L)
+```
+
+## 题目 52: 因子平方和
+### 描述
+6 的因子有 1, 2, 3 和 6, 它们的平方和是 ``1 + 4 + 9 + 36 = 50``. 
+
+如果 f(N) 代表正整数 N 所有因子的平方和, 那么 f(6) = 50.
+
+现在令 F 代表 f 的求和函数, 亦即 ``F(N) = f(1) + f(2) + .. + f(N)``, 显然 F 一开始的 6 个值是: 1, 6, 16, 37, 63 和 113.
+
+那么对于任意给定的整数 N (``1 <= N <= 10^8``), 输出 F(N) 的值.
+
+### solve
+```Python
+#目测自己的算法会超时
+#思路：一个函数用于求因子，一个函数用于求因子的和f(N)，一个函数用于求F(N)
+#果然超时了。
+
+"""
+附题解2个，自己还没解决出来：
+---version 1---
+
+
+这道题直接做回超时。
+
+技巧一：F(N)可以看作N个1*＊2，N/2个2*＊2，N/3个3＊＊2，，，，，以此类推。即便这样，还会超时。
+
+技巧二：对称。N个1*＊2对称1个N**2，N/2个2*＊2对称2个N/2**2,,,,,,. 但是，值得注意的是对称并不是一对一的，而是一对多的。比如N个1*＊2对称的是1个 (N/2**2,,,,,,,(N-1)**2，N**2］。依次类推。
+
+import math
+def sumsqr(m, n):
+    if m >= n:
+        return 0
+    return n*(n+1)*(2*n+1)/6-m*(m+1)*(2*m+1)/6
+def F(n):
+    i=1
+    seg=[]
+    sum1=0
+    high = n;
+    while i*i <=n:
+        sum1 += (n/i)*i**2
+        low = max(n/(i+1), i);
+        sum1 += i*sumsqr(low,high)
+        i += 1
+        high = low
+    return sum1
+
+F(N)
+计算清楚每个N**2序列的个数即可
+
+def func(N):
+    result=0
+    n=N+1
+    a,b=0,0
+    while n>1:
+        n=N/(N/n+1)
+        a,b=N/n,a
+        print n
+        result+=(a-b)*n*(n+1)*(2*n+1)/6
+print func(N)
+sorry，贴错了~更新下：
+
+def func(N):
+    result=0
+    n=N+1
+    a,b=0,0
+    while n>1:
+        n=N/(N/n+1)
+        a,b=N/n,a
+        result+=(a-b)*n*(n+1)*(2*n+1)/6
+    return result
+print func(N)
+
+---version 2---
+#N = 2
+
+def cal(x):
+    return x * (x + 1) * (2 * x + 1) / 6
+
+ans = 0
+
+for i in range(1, N / 10 + 1):
+    ans += (N / i) * i * i
+for i in range(9, 0, -1):
+    ans += i * (cal(N / i) - cal(N / (i + 1)))
+print ans
+
+
+"""
+
+def getDivisors(num):
+    divisors = []
+    for i in range(1, num + 1):
+        if num % i == 0:
+            divisors.append(i)
+
+    return divisors
+
+def getDivisorsSum(num):
+    divisors = getDivisors(num)
+    answer = 0
+    for each in divisors:
+        answer += each ** 2
+
+    return answer
+
+def getTotalDivisorsSum(num):
+    answer = 0
+    for i in range(num):
+        answer += getDivisorsSum(i + 1)
+
+    return answer
+
+if __name__ == "__main__":
+    for N in range(1, 8):
+        print(getTotalDivisorsSum(N))
+```
+
+## 题目 56: 切西瓜
+### 描述
+小Py要吃西瓜，想知道切了n刀后，最多能切出多少块？请你们帮助下小Py.
+
+给你一个正整数n（0 < n < 10^3),你输出一个数字，代表最多能切多少块。
+
+如n=1, 输出2。
+
+### solve
+```Python
+#通过n条直线，最多可将一个平面分割成1+（1+n）n/2
+#后面才看到这应该是三维平面里的公式才能：Y = (X ** 3 +5 * X + 6) / 6
+
+"""
+题解还有另外一个公式：
+C(n,0)+C(n,1)+C(n,2)+C(n,3)
+"""
+
+def spaceSubdivide(n):
+    return int((n ** 3 + 5 * n + 6) / 6)
+
+if __name__ == "__main__":
+    # n = 1
+    print(spaceSubdivide(n))
+```
+
+## 题目 67: 回文数 I
+### 描述
+若一个数（首位不为0）从左到右读与从右到左读都是一样，这个数就叫做回文数，例如12521就是一个回文数。
+
+给定一个正整数，把它的每一个位上的数字倒过来排列组成一个新数，然后与原数相加，如果是回文数则停止，如果不是，则重复这个操作，直到和为回文数为止。给定的数本身不为回文数。
+
+例如：87则有：
+
+    STEP1: 87+78=165
+    STEP2: 165+561=726
+    STEP3: 726+627=1353
+    STEP4: 1353+3531=4884
+
+现在给你一个正整数M（``12 <= M <= 100``),输出最少经过几步可以得到回文数。如果在8步以内（含8步）不可能得到回文数，则输出0。
+
+例如：M=87，则输出4.
+
+### solve
+```Python
+#感觉是遍历一遍就出来了
+
+def countTimes(num):
+    counts = 0
+    while counts <= 8:
+        counts += 1
+        num = int(str(num)[::-1]) + num
+        if isHuiWen(num):
+            return counts
+    else:
+        return 0
+
+def isHuiWen(num):
+    return str(num)[::-1] == str(num)
+
+if __name__ == "__main__":
+    # M = 87
+    print(countTimes(M))
+
+"""
+题解
+---version 1---
+flag = 0
+for i in range(8):
+    M = M + int(str(M)[::-1])
+    if str(M) == str(M)[::-1]:
+        flag = i + 1
+        break
+print flag
+---version 2---
+fg=0
+while fg<8:
+    S=int(str(M)[::-1])
+    D=S+M
+    fg += 1
+    if D==int(str(D)[::-1]):
+        print fg
+        break
+    else:
+        M=D
+else:
+    print 0
+"""
+```
