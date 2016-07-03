@@ -759,3 +759,344 @@ if __name__ == '__main__':
 ```Python
 print("Happy")
 ```
+
+## 题目 31: 山峰的个数
+### 描述
+十一假期,小P出去爬山,爬山的过程中每隔10米他都会记录当前点的海拔高度(以一个浮点数表示),这些值序列保存在一个由浮点数组成的列表h中。回到家中，小P想研究一下自己经过了几个山峰，请你帮他计算一下，输出结果。
+
+例如：h=[0.9,1.2,1.22,1.1,1.6,0.99], 将这些高度顺序连线，会发现有两个山峰，故输出一个2(序列两端不算山峰)
+
+### solve
+```Python
+#自己的思路是，遍历一遍，看每个数（除第一个和最后一个以外）是否比两边的数都大
+#是的话即为山峰
+
+def countNumOfPeaks(List):
+    counts = 0
+    for i in range(1, len(List) - 1):
+        if List[i] > List[i - 1] and List[i] > List[i + 1]:
+            counts += 1
+
+    return counts
+
+if __name__ == '__main__':
+    # h = [0.9, 1.2, 1.22, 1.1, 1.6, 0.99]
+    print(countNumOfPeaks(h))
+```
+
+## 题目 32: 三角形形状
+### 描述:
+给以一个三角形的三边长a,b和c(边长是浮点数),请你判断三角形的形状。
+
+若是锐角三角形，输出R;
+
+若是直角三角形，输出Z;
+
+若是钝角三角形，输出D;
+
+若三边长不能构成三角形，输出W.
+
+### solve
+```Python
+#自己想到的思路是用余弦定理
+#baidu了一下，发现是用最大边所对应的角来计算
+"""
+若最大边的平方等于另两边的平方和,则它为直角三角形;
+若最大边的平方大于另两边的平方和,则它为钝角三角形;
+若最大边的平方小于另两边的平方和,则它为锐角三角形.
+"""
+
+def canBeTriangle(a, b, c):
+    List = [a, b, c]
+    List.sort()
+    if (List[0] + List[1] > List[2]) and (List[2] - List[0] < List[1]):
+        return True
+    else:
+        return False
+
+def getTypeOfTriangle(a, b, c):
+    List = [i ** 2 for i in [a, b, c]]
+    List.sort()
+    result = List[2] - List[1] - List[0]
+    if result == 0:
+        return "Z"
+    elif result < 0:
+        return "R"
+    elif result > 0:
+        return "D"
+
+if __name__ == '__main__':
+    # a, b, c = 3, 4, 5
+    if canBeTriangle(a, b, c) == False:
+        print("W")
+    else:
+        print(getTypeOfTriangle(a, b, c))
+```
+
+## 题目 33: 大幂次运算
+### 描述:
+给你两个正整数a(``0 < a < 100000``)和n(``0 <= n <=100000000000``)，计算``(a^n) % 20132013``并输出结果
+
+### solve
+```Python
+def fastExpMod(b, e, m):
+    result = 1
+    while e != 0:
+        if (e&1) == 1:
+            # ei = 1, then mul
+            result = (result * b) % m
+        e >>= 1
+        # b, b^2, b^4, b^8, ... , b^(2^n)
+        b = (b*b) % m
+    return result
+
+# a, n = 5, 6
+print(fastExpMod(a, n, 20132013))
+```
+======================上面也是快速幂取模，跑起来对的！！！=========================
+***
+
+### solve2
+```Python
+#之前ACM有做过，就是求模公式呗
+"""
+翻一下acm笔记：
+(a * a) % m = ( a % m * a % m ) % m
+"""
+
+#看了下题解，说是快速幂（之前ACM刷斐波那契的时候应该遇到过了，就是二分矩阵快速求幂）
+#直接看题解报告了，自己写出算法是不太可能的。。。
+#题解。。。。牛过头了：print(pow(a, n, 20132013))
+
+"""
+以下说是快速幂取模：
+a^b mod c = ((a^2)^(b / 2)) mod c, b是偶数
+a^b mod c = ((a^2)^(b / 2) * a) mod c, b是奇数
+
+#下面的代码，在自己的机子上跑着是错的，但是在网上跑的确是对的？python版本的问题我估计！
+def PowerMod(a, n, ret):
+    if n == 0:
+        return ret
+    if n % 2:
+        ret = ret * a % 20132013
+
+    return PowerMod( a * a % 20132013, n / 2, ret)
+
+if __name__ == '__main__':
+    a, n = 5, 6
+    ret = 1
+    print(PowerMod(a, n, ret))
+"""
+```
+
+### run time error
+```Python
+"""
+version 1
+说是算法超时了...
+O(n)算法说我超时了，好吧，看来只能看题解了
+def solve(a, n):
+    result = 0
+    if n == 0:
+        result = 1
+    else:
+        result = a % 20132013
+        n -= 1
+
+    while n > 0:
+        n -= 1
+        result = (result * (a % 20132013)) % 20132013
+
+    return result
+
+if __name__ == '__main__':
+    a, n = 5, 5
+    print(solve(a, n))
+"""
+```
+
+## 题目 35: 最大连续子序列 
+### 描述:
+给你一个整数list L, 如 L=[2,-3,3,50], 求L的一个连续子序列，使其和最大，输出最大子序列的和。
+
+例如，对于L=[2,-3,3,50]， 输出53（分析：很明显，该列表最大连续子序列为[3,50]).
+
+### solve
+```Python
+#ACM老师讲过的一道题（比这难得多的），PPT里有，动态规划
+#查看了一下课件，得到状态方程：b[j]=max( b[j-1]+a[j], 0+a[j] ), 1<=j<=n
+
+def getLargestSum(List):
+    b = 0
+    largest_sum = 0
+    for each in List:
+        if b > 0:
+            b += each
+        else:
+            b = each
+        largest_sum = max(b, largest_sum)
+
+    return largest_sum
+
+if __name__ == '__main__':
+    # L = [2, -3, 3, 50]
+    print(getLargestSum(L))
+```
+
+## 题目 36: 最大非连续子序列 
+### 描述:
+给你一个整数list L, 如 L=[2,-3,3,50], 求L的一个非连续子序列，使其和最大，输出最大子序列的和。
+
+这里非连续子序列的定义是，子序列中任意相邻的两个数在原序列里都不相邻。
+
+例如，对于L=[2,-3,3,50]， 输出52（分析：很明显，该列表最大非连续子序列为[2,50]).
+
+### solve
+```Python
+#个人的思路是依旧利用动态规划，状态方程为：
+#b[j] = max(b[j - 2] + List[j], b[j - 1], List[j])
+
+def solve(List):
+    L = List[:] # 没有 List.copy(), 用 List[:] 替代了
+    if len(List) > 1:
+        L[1] = max(List[0], List[1])
+    for i in range(2, len(List)):
+        L[i] = max(L[i - 2] + List[i], L[i - 1], List[i])
+
+    return L[-1]
+
+if __name__ == '__main__':
+    # L = [8, -3, 2, -3, 3, 60, -100, 50]
+    print(solve(L))
+
+"""
+看下题解报告的：
+---version 1---
+n = len(L)
+f = list(L)
+for i in range(n):
+    if i > 0:
+        f[i] = max(f[i],f[i-1])
+    if i > 1:
+        f[i] = max(f[i],f[i-2]+L[i])
+
+print(f[n-1])
+
+其中f[i]表示0-i的最大非连续子序列和
+
+---version 2---
+for i in range(2, len(L)):
+    L[i] = max(max(L[0:i-1]), 0) + L[i]
+print max(L)
+"""
+```
+
+## 题目 37: 简单题之勾股定理
+### 描述
+给你直角三角形的两个直角边的边长a,b,请你求出其斜边边长，结果保留小数点后三位小数。
+
+如a=3, b =4, 则输出5.000。
+
+### solve
+```Python
+#勾股定理的公式不就是c^2 = a^2 + b^2么
+#print '%.3f' %(a**2+b**2)**0.5
+
+def getC(a, b):
+    c = a ** 2 + b ** 2
+    return c ** 0.5
+
+if __name__ == '__main__':
+    # a, b = 3, 4
+    answer = getC(a, b)
+    print(format(answer, '.3f'))
+```
+
+## 题目 38: 简单题之列表转换
+### 描述
+给你一个字符串列表L，请用一行代码将列表所有元素拼接成一个字符串并输出。
+
+如L=['abc','d','efg'], 则输出abcdefg。
+
+### solve
+```Python
+#题目要求一行代码，吓~~~
+
+# L=['abc','d','efg']
+print(''.join([str(i) for i in L])) #这句好了，在2.X版本下
+#题解更简单：
+print(''.join(L))
+
+#下面这句在python3.X版本倒是对了，2.X自己报语法错误了
+[print(i, end = "") for i in L]
+```
+
+## 题目 39: 简单题之输出格式练习 
+### 描述
+
+给你一个字符串列表L，用一行代码顺序输出L中的元素，元素之间以一个空格隔开，注意行尾不要有空格，输出单独占一行。
+如L=['abc','d','efg'], 则输出abc d efg。
+
+### solve
+```Python
+#又是一行代码，吓~~
+#思路跟上一题一样呗，2.X版本下用join函数, 3.X版本下print(i, end=' ')
+
+# L = ['abc', 'd', 'efg']
+print(' '.join(L))
+```
+
+## 题目 40: 整数解 
+### 描述
+给你两个整数a和b（``-10000<a,b<10000``），请你判断是否存在两个整数，他们的和为a，乘积为b。
+
+若存在，输出Yes,否则输出No
+
+例如：``a=9,b=15``, 此时不存在两个整数满足上述条件，所以应该输出No。
+
+### solve
+```Python
+#看到a和b那么小，一下子就想遍历了。。。
+#看version 1的遍历，一下子就超时了，说明不行
+#x + y = a, x * y = b ==> x * ( a - x ) = b，这样就只有一层遍历了
+
+#看题解居然使用解方程的方法
+#题解的时间复杂度为O(1)啊，醉了：
+#两个数应该为方程x^2 - a*x + b = 0 的解，判断delta即可
+
+def isExist(a, b):
+    for i in range(-9999, 10000):
+        if i * ( a - i ) == b:
+            return True
+
+    return False
+
+if __name__ == '__main__':
+    # a, b = 9, 15
+    if isExist(a, b):
+        print("Yes")
+    else:
+        print("No")
+
+"""
+---version 2---
+题解：
+from math import sqrt
+delta = a*a - 4*b
+if delta > 0 and int(sqrt(delta)) == sqrt(delta):
+    print "Yes"
+else:
+    print "No"
+"""
+
+"""
+---version 1---
+def isExist(a, b):
+    for i in range(-9999, 10000):
+        for j in range(-9999, 10000):
+            if i + j == a and i * j == b:
+                return True
+
+    return False
+"""
+```
