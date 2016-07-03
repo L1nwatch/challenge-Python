@@ -458,3 +458,294 @@ if __name__ == '__main__':
     string = transposition(a, b)
     print(string)
 ```
+
+## 题目 21: 回文子串 
+### 描述
+给你一个字符串a和一个正整数n,判断a中是否存在长度为n的回文子串。如果存在，则输出YES，否则输出NO。
+
+回文串的定义：记串str逆序之后的字符串是str1，若str=str1,则称str是回文串，如"abcba".
+
+### solve
+```Python
+def isHuiWen(string):
+    return string[::-1] == string
+
+def huiWenStringExist(string, n):
+    while len(string) >= n:
+        test_string = string[:n]
+        if isHuiWen(test_string):
+            return True
+        else:
+            string = string[1:]
+    return False
+
+if __name__ == '__main__':
+    if huiWenStringExist(a, n):
+        print("YES")
+    else:
+        print("NO")
+```
+
+## 题目 22: 时间就是金钱 
+### 描述
+给你两个时间st和et(00:00:00<=st <= et<=23:59:59), 请你给出这两个时间间隔的秒数。
+
+如：st="00:00:00", et="00:00:10", 则输出10.
+
+### solve
+```Python
+#一看这题目就知道可以用时间模块
+#PS：有模块的坚决不自己写代码
+#主要参考题解的两段代码，一段是如何用datatime，另一段是利用map和zip的
+
+#这一段代码略精湛啊，暂时不学了
+"""
+et = map(int, et.split(":"))
+st = map(int, st.split(":"))
+dif = 0
+for e, s in zip(et, st):
+    dif = dif * 60 + (e - s)
+print dif
+"""
+
+# 最终提交
+import datetime
+
+st = datetime.datetime.strptime(st, "%H:%M:%S")
+et = datetime.datetime.strptime(et, "%H:%M:%S")
+
+print((et - st).seconds)
+```
+
+### 参考资料
+[datetime模块](http://blog.csdn.net/jgood/article/details/5457284)
+
+## 题目 23: 365 Or 366？
+### 描述
+
+一年有多少天，这是个大问题，很值得思考。现在给你一个年份year(year为四位数字的字符串，如"2008","0012"),
+你输出这一年的天数。如year="2013", 则输出365。
+
+### solve
+```Python
+#自己一看的思路就是判断年份是不是闰年，闰年是366剩下的都是365
+#先按自己的写一遍再看下题解吧
+
+def is_leap_year(year):
+    year = int(year)
+    if year % 400 == 0 or (year % 4 == 0 and year % 100 != 0 ):
+        return True
+    else:
+        return False
+
+if __name__ == '__main__':
+    if is_leap_year(year):
+        print("366")
+    else:
+        print("365")
+
+"""
+题解的datetime库解决法：
+def year(years):
+ import datetime,time
+ y1 = datetime.datetime(years,1,1)
+ y2 = datetime.datetime(years+1,1,1)
+
+ print str(y2 - y1).split(' ')[0]
+
+学习了，实际上,y2 - y1 返回的是datetime 的类型 timedelta 时间差
+直接改成 （y2 - y1）. days 就好了
+"""
+```
+
+## 题目 25: 格式化时间
+### 描述
+给你一个时间t（t是一个字典，共有六个字符串key(year,month,day,hour,minute,second),值为每个值为数字组成的字符串，如 t={'year':'2013','month':'9','day':'30','hour':'16','minute':'45','second':'2'}
+
+请将其按照以下格式输出， 格式:XXXX-XX-XX XX:XX:XX。如上例应该输出： 2013-09-30 16:45:02。
+
+### solve
+```Python
+#虽然可以直接看题解的，不过我还是自己学一下datetime模块后再去看题解吧。
+#自己学了一下，有date来表示年月日的，以及time来表示时分秒的
+
+import datetime
+
+#自己实验打印出来明明长得一样，提交上去就是不对我也无语了
+#好像自己是因为空格问题，自己手打了个空格后就对了。
+if __name__ == '__main__':
+    # t={'year':'2013','month':'9','day':'30','hour':'16','minute':'45','second':'2'}
+    test = datetime.date(int(t['year']), int(t['month']), int(t['day']))
+    test_2 = datetime.time(int(t['hour']), int(t['minute']), int(t['second']))
+    print(str(test) + " " + str(test_2))
+
+
+"""
+看下题解的写法：
+from datetime import datetime
+for k, v in t.items():
+    t[k] = int(v) #这个转换的方法得学下，要不然每个都得加个int累死了
+    #下面的datetime居然能有这么多，学习了
+dt = datetime(t['year'], t['month'], t['day'], t['hour'], t['minute'], t['second'])
+print dt.strftime("%Y-%m-%d %X")
+
+datetime.strptime(date_string, format)：将格式字符串转换为datetime对象；
+"""
+```
+
+## 题目 26: 序列判断
+### 描述
+给你一个整数组成的列表L，按照下列条件输出：
+若L是升序排列的,则输出"UP";
+
+若L是降序排列的,则输出"DOWN";
+
+若L无序，则输出"WRONG"。
+
+### solve
+```Python
+# 最终提交
+if sorted(L)==L:
+    print "UP"
+elif sorted(L)[::-1]==L:
+    print "DOWN"
+else:
+    print "WRONG"
+
+-----上面的答案比我的简洁好多------
+
+#没想到好办法，自己遍历着来判断一下吧
+#如果题解有更好的方法自己再学习吧
+
+def isUpList(List):
+    new_List = List.copy()  #2.X版本提示说没有copy这个方法，所以得用List[:]来复制
+    new_List.sort()
+    if new_List == List:
+        return True
+    else:
+        return False
+
+def isDownList(List):
+    new_List = List.copy() #copy.deepcopy(L)，这个方法也是可以的
+    new_List.sort(reverse = True)
+    if new_List == List:
+        return True
+    else:
+        return False
+
+if __name__ == '__main__':
+    L = [3, 2]
+    if isUpList(L):
+        print("UP")
+    elif isDownList(L):
+        print("DOWN")
+    else:
+        print("WRONG")
+```
+
+## 题目 27: 加油站 
+### 描述
+一个环形的公路上有n个加油站，编号为0,1,2,...n-1,每个加油站加油都有一个上限，保存在列表limit中，即limit[i]为第i个加油站加油的上限，而从第i个加油站开车开到第(i+1)%n个加油站需要cost[i]升油,cost为一个列表。
+
+现在有一辆开始时没有油的车，要从一个加油站出发绕这个公路跑一圈回到起点。
+
+给你整数n，列表limit和列表cost,你来判断能否完成任务。
+
+如果能够完成任务，输出起始的加油站编号，如果有多个,输出编号最小的。
+
+如果不能完成任务，输出-1。
+
+### solve
+```Python
+#遍历一下就出来答案了吧这题看着。。。
+#交上去一次性成功了。。。没测试答案心里虚虚的。。
+
+def canFinishTheWork(n, limit, cost, i):
+    bus_gas = 0
+    order = i
+    while True:
+        bus_gas += limit[i]
+        if bus_gas < cost[i]:
+            return False
+        else:
+            bus_gas -= cost[i]
+        i = (i + 1) % n
+        if i == order:
+            break
+    return True
+
+if __name__ == '__main__':
+    # n = 5
+    # limit = [1, 2, 3, 4, 5]
+    # cost = [1, 2, 3, 4, 5]
+    List = []
+    for i in range(n):
+        if canFinishTheWork(n, limit, cost, i):
+            List.append(i)
+
+    List.sort()
+    if len(List) <= 0:
+        print("-1")
+    else:
+        print(List[0])
+```
+
+## 题目 28: 相同数字 
+### 描述
+给你一个整数列表L,判断L中是否存在相同的数字，若存在，输出YES，否则输出NO。
+
+### solve
+```Python
+#一上来两个思路，一个是转换成set集合再比较长度，另一个是遍历一遍
+
+def hasSameNum(List):
+    return len(set(List)) != len(List)
+
+if __name__ == '__main__':
+    # L = [1, 2, 3]
+    if hasSameNum(L):
+        print("YES")
+    else:
+        print("NO")
+```
+
+## 题目 29: 判断三角形
+### 描述
+给你三个整数a,b,c,  判断能否以它们为三个边长构成三角形。
+
+若能，输出YES，否则输出NO。
+
+### solve
+```Python
+#三角形两边之和大于第三边，两边之差小于第三边
+#一次性AC
+
+"""
+关于判定定理的问题，这里有两种说法：
+legend_001 评论于 2014-07-12 11:33:30
+先sort，然后保证前两个的和大于第三个就好，因为sort之后就保证了前两个的差小于第三个
+ylgkger 评论于 2014-12-19 19:10:27
+简化 a+b+c-max(a,b,c)*2>0即可
+"""
+
+def canBeTriangle(a, b, c):
+    List = [a, b, c]
+    List.sort()
+    return (List[0] + List[1] > List[2]) and (List[2] - List[0] < List[1])
+
+if __name__ == '__main__':
+    # a, b, c = 3, 4, 5
+    if canBeTriangle(a, b, c):
+        print("YES")
+    else:
+        print("NO")
+```
+
+## 题目 30: National Day
+### 描述:
+马上国庆节了，用一个英文单词描述你此时此刻的心情。
+
+### solve
+```Python
+print("Happy")
+```
